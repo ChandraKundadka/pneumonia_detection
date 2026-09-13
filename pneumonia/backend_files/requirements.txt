@@ -1,5 +1,5 @@
 
-tensorflow>=2.15.0
+tensorflow-cpu
 scikit-learn==1.6.1
 opencv-python==4.12.0.88
 seaborn==0.13.2
