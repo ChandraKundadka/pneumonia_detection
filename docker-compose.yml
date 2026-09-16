@@ -9,7 +9,7 @@ services:
     container_name: pneumonia-backend
 
     environment:
-      HF_TOKEN: ${HF_TOKEN:?HF_TOKEN must be supplied}
+      HF_TOKEN: ${HF_TOKEN:-}
       MODEL_REPO_ID: ${MODEL_REPO_ID:-Chandrashekhara/pneumonia_prediction_model_v1_0}
       MODEL_FILENAME: ${MODEL_FILENAME:-pneumonia_prediction_model_MobileNetV2_ffnn.keras}
 
