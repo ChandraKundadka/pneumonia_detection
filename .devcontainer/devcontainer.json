@@ -1,0 +1,24 @@
+
+{
+  "name": "Pneumonia ML Workspace",
+
+  "forwardPorts": [8501, 7860],
+
+  "portsAttributes": {
+    "8501": {
+      "label": "Streamlit UI",
+      "onAutoForward": "openBrowser"
+    },
+    "7860": {
+      "label": "Pneumonia Detection API",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "secrets": {
+    "HF_TOKEN": {
+      "description": "Hugging Face access token used to download the pneumonia detection model.",
+      "documentationUrl": "https://huggingface.co/settings/tokens"
+    }
+  }
+}
