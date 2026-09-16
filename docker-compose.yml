@@ -1,0 +1,25 @@
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: pneumonia-backend
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+      MODEL_REPO_ID: ${MODEL_REPO_ID:-Chandrashekhara/pneumonia_prediction_model_v1_0}
+      MODEL_FILENAME: ${MODEL_FILENAME:-pneumonia_prediction_model_MobileNetV2_ffnn.keras}
+    ports:
+      - "7860:7860"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: pneumonia-frontend
+    environment:
+      BACKEND_URL: http://backend:7860
+    depends_on:
+      - backend
+    ports:
+      - "8501:8501"
+    restart: unless-stopped

@@ -7,6 +7,7 @@ matplotlib==3.10.0
 numpy==2.2.6
 pandas==2.2.3
 pydicom
+huggingface_hub
 
 
 joblib==1.4.2

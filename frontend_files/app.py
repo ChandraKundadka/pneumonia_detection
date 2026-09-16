@@ -2,7 +2,13 @@
 import streamlit as st
 import requests
 from PIL import Image
+import io
+import pydicom
+import numpy as np
 
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:7860").rstrip("/")
+
+#BACKEND_URL = "https://Chandrashekhara-superkart-sales-predictor-backend.hf.space"
 
 # --------------------------------------------------
 # Page configuration
@@ -42,13 +48,30 @@ uploaded_file = st.file_uploader(
 # --------------------------------------------------
 
 if uploaded_file is not None:
+    filename = uploaded_file.name.lower()
+# Read DICOM using pydicom
 
-    image = Image.open(uploaded_file)
+    if filename.endswith(".dcm"):
+        dcm = pydicom.dcmread(io.BytesIO(uploaded_file.read()))
+        raw_arr = dcm.pixel_array.astype(np.float32)
+
+        # Normalize pixel values to [0, 255] uint8 for display
+        pixel_range = raw_arr.max() - raw_arr.min()
+        if pixel_range == 0:
+            norm_arr = np.zeros_like(raw_arr, dtype=np.uint8)
+        else:
+            norm_arr = ((raw_arr - raw_arr.min()) / pixel_range * 255).astype(np.uint8)
+
+        display_image = norm_arr
+    else:
+        # Standard raster image (PNG, JPG, JPEG)
+        display_image = Image.open(uploaded_file)
+
 
     st.subheader("Uploaded X-ray")
 
     st.image(
-        image,
+        display_image,
         caption="Uploaded Chest X-ray",
         use_container_width=True
     )
@@ -69,7 +92,7 @@ if uploaded_file is not None:
 
             # Send image to backend
             response = requests.post(
-                "https://Chandrashekhara-superkart-sales-predictor-backend.hf.space/v1/predict",
+                f"{BACKEND_URL}/v1/predict",
                 files={
                     "file": (
                         uploaded_file.name,
