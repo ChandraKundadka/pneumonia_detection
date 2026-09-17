@@ -7,7 +7,6 @@ import pydicom
 import numpy as np
 import os
 
-
 BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:7860").rstrip("/")
 
 #BACKEND_URL = "https://Chandrashekhara-superkart-sales-predictor-backend.hf.space"
