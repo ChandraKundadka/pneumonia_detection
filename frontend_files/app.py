@@ -5,6 +5,8 @@ from PIL import Image
 import io
 import pydicom
 import numpy as np
+import os
+
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:7860").rstrip("/")
 
