@@ -1,33 +1,21 @@
 {
   "name": "Pneumonia ML Workspace",
-
-  "dockerComposeFile": ["../docker-compose.yml"],
-  "service": "frontend",
-  "workspaceFolder": "/app",
-
+  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableMoby": true
+    }
+  },
   "forwardPorts": [8501, 7860],
-
   "portsAttributes": {
     "8501": {
       "label": "Streamlit UI",
       "onAutoForward": "openBrowser"
     },
     "7860": {
-      "label": "Pneumonia Detection API",
+      "label": "Flask Backend API",
       "onAutoForward": "silent"
-    }
-  },
-
-  "remoteEnv": {
-    "HF_TOKEN": "${localEnv:HF_TOKEN}"
-  },
-
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance"
-      ]
     }
   }
 }
