@@ -6,8 +6,13 @@ import io
 import pydicom
 import numpy as np
 import os
+ 
+# --------------------------------------------------
+# Dynamic Backend Configuration & Auth
+# --------------------------------------------------
+DEFAULT_BACKEND_URL = "https://chandrashekhara-pneumonia-prediction-backend.hf.space"
+BACKEND_URL = os.getenv("BACKEND_URL", DEFAULT_BACKEND_URL).rstrip("/")
 
-BACKEND_URL = "https://chandrashekhara-pneumonia-prediction-backend.hf.space"
 
 # --------------------------------------------------
 # Page configuration
