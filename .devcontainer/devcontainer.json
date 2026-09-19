@@ -1,6 +1,9 @@
-
 {
   "name": "Pneumonia ML Workspace",
+
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "frontend",
+  "workspaceFolder": "/app",
 
   "forwardPorts": [8501, 7860],
 
@@ -15,10 +18,16 @@
     }
   },
 
-  "secrets": {
-    "HF_TOKEN": {
-      "description": "Hugging Face access token used to download the pneumonia detection model.",
-      "documentationUrl": "https://huggingface.co/settings/tokens"
+  "remoteEnv": {
+    "HF_TOKEN": "${localEnv:HF_TOKEN}"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
     }
   }
 }

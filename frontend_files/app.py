@@ -63,7 +63,7 @@ if uploaded_file is not None:
     st.image(
         display_image,
         caption="Uploaded Chest X-ray",
-        use_column_width=True
+        use_container_width=True
     )
 
     # --------------------------------------------------
