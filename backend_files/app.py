@@ -9,20 +9,13 @@ import os
 import pydicom
 
 
-#MODEL_PATH = "deployment_files/pneumonia_prediction_model_v1_0.keras"  # model file is in the project directory
-#MODEL_PATH = "Chandrashekhara/pneumonia_prediction_model_v1_0"
-
-#MODEL_PATH = "/content/drive/MyDrive/GL/Capstone/model/pneumonia_prediction_model_MobileNetV2_ffnn.keras"  # model file is in the project directory
-
-#MODEL_PATH = "https://huggingface.co/Chandrashekhara/pneumonia_prediction_model_v1_0/blob/main/pneumonia_prediction_model_MobileNetV2_ffnn.keras"
-
-
 # Initialize Flask app
 pneumonia_detection_api = Flask("pneumonia_detection_api")
 
+#Prepare model path
 MODEL_REPO_ID = os.getenv(
     "MODEL_REPO_ID",
-    "Chandrashekhara/pneumonia_prediction_model_v1_0",
+    "Chandrashekhara/pneumonia_prediction_model",
 )
 MODEL_FILENAME = os.getenv(
     "MODEL_FILENAME",
@@ -45,7 +38,7 @@ model_path = hf_hub_download(
 )
 
 # Load the local model file
-model = tf.keras.models.load_model(model_path)
+model = load_model(model_path)
 
 print("Model loaded successfully!")
 
@@ -91,26 +84,34 @@ def predict_pneumonia():
             dicom_data = pydicom.dcmread(file.stream)
             pixel_array = dicom_data.pixel_array.astype(float)
 
-            # Rescale pixel values to 0-255 uint8 range
-            pixel_array = (np.maximum(pixel_array, 0) / pixel_array.max()) * 255.0
-            uint8_image = np.uint8(pixel_array)
+        # Normalize DICOM pixel values to [0, 1] safely
+            denom = pixel_array.max() - pixel_array.min()
+            if denom > 0:
+                pixel_array = (pixel_array - pixel_array.min()) / denom
+            else:
+                pixel_array = np.zeros_like(pixel_array)
 
-            # Convert to a 3-channel RGB PIL image
+            # Convert to 3-channel RGB PIL Image (scaled to 0-255 for standard PIL resizing)
+            uint8_image = (pixel_array * 255.0).astype(np.uint8)
             image = Image.fromarray(uint8_image).convert("RGB")
+
         else:
             # Standard formats: PNG, JPG, JPEG, etc.
             image = Image.open(file.stream).convert("RGB")
 
         print("Image received:", image.size)
 
+# Preprocessing
         # Resize image to model input size
         image = image.resize((128, 128))
+
+        # Normalize to [0, 1] and add batch dimension (1, 128, 128, 3)
         image_array = np.array(image) / 255.0
         image_array = np.expand_dims(image_array, axis=0)
 
         print("Image preprocessed")
 
-        # Model prediction
+# Model prediction
         prediction = model.predict(image_array)
 
         print("Raw prediction:", prediction)
